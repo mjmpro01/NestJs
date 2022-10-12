@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpCode, Header, Redirect, Query, HttpException, HttpStatus, ParseIntPipe, UsePipes, UseGuards, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpCode, Header, Redirect, Query, HttpException, HttpStatus, ParseIntPipe, UsePipes, UseGuards, SetMetadata, UseInterceptors } from '@nestjs/common';
 import { CatService } from './cat.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
@@ -6,8 +6,10 @@ import { JoiValidationPipe } from '../JoiValidationPipe';
 import { Cat } from './entities/cat.entity';
 import { RolesGuard } from 'src/roles.guard';
 import { Roles } from 'src/roles.decorator';
+import { LoggingInterceptor } from 'src/logging.interceptor';
 
 @Controller('cat')
+@UseInterceptors(new LoggingInterceptor())
 export class CatController {
   constructor(private readonly catService: CatService) { }
 
@@ -23,7 +25,7 @@ export class CatController {
   }
   @Get()
   findAll() {
-    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    return 'ok';
   }
   @Get('docs')
   @Redirect('https://docs.nestjs.com', 302)
