@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpCode, Header, Redirect, Query, HttpException, HttpStatus, ParseIntPipe, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpCode, Header, Redirect, Query, HttpException, HttpStatus, ParseIntPipe, UsePipes, UseGuards, SetMetadata } from '@nestjs/common';
 import { CatService } from './cat.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { JoiValidationPipe } from '../JoiValidationPipe';
 import { Cat } from './entities/cat.entity';
+import { RolesGuard } from 'src/roles.guard';
+import { Roles } from 'src/roles.decorator';
 
 @Controller('cat')
 export class CatController {
@@ -12,7 +14,10 @@ export class CatController {
   @Post()
   @HttpCode(204)
   @Header('Minh', 'none')
-  @UsePipes(new JoiValidationPipe(Cat))
+  @UseGuards(new RolesGuard())
+  @SetMetadata('roles',['admin']) // set role for controller
+  @Roles('admin')
+  // @UsePipes(new JoiValidationPipe(Cat)) validate params
   create(@Body() createCatDto: CreateCatDto) {
     return this.catService.create(createCatDto);
   }
